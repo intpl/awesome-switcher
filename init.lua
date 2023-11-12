@@ -36,11 +36,6 @@ _M.settings = {
 	preview_box_title_font_size_factor = 0.8,
 	preview_box_title_color = {0,0,0,1},
 
-	client_opacity = false,
-	client_opacity_value_selected = 1,
-	client_opacity_value_in_focus = 0.5,
-	client_opacity_value = 0.5,
-
 	cycle_raise_client = true,
 	cycle_all_clients  = false,
 }
@@ -136,7 +131,6 @@ function _M.populateAltTabTable()
 		for ci = 1, #clients do
 			for ti = 1, #_M.altTabTable do
 				if _M.altTabTable[ti].client == clients[ci] then
-					_M.altTabTable[ti].client.opacity = _M.altTabTable[ti].opacity
 					_M.altTabTable[ti].client.minimized = _M.altTabTable[ti].minimized
 					break
 				end
@@ -150,7 +144,6 @@ function _M.populateAltTabTable()
 		table.insert(_M.altTabTable, {
 		client = clients[i],
 		minimized = clients[i].minimized,
-		opacity = clients[i].opacity
        })
 	end
 end
@@ -172,32 +165,6 @@ function _M.createPreviewText(client)
 end
 
 -- Preview is created here.
-function _M.clientOpacity()
-	if not _M.settings.client_opacity then return end
-
-	local opacity = _M.settings.client_opacity_value
-	if opacity > 1 then opacity = 1 end
-	for i,data in pairs(_M.altTabTable) do
-		data.client.opacity = opacity
-	end
-
-	if client.focus == _M.altTabTable[_M.altTabIndex].client then
-		-- Let's normalize the value up to 1.
-		local opacityFocusSelected = _M.settings.client_opacity_value_selected + _M.settings.client_opacity_value_in_focus
-		if opacityFocusSelected > 1 then opacityFocusSelected = 1 end
-		client.focus.opacity = opacityFocusSelected
-	else
-		-- Let's normalize the value up to 1.
-		local opacityFocus = _M.settings.client_opacity_value_in_focus
-		if opacityFocus > 1 then opacityFocus = 1 end
-		local opacitySelected = _M.settings.client_opacity_value_selected
-		if opacitySelected > 1 then opacitySelected = 1 end
-
-		client.focus.opacity = opacityFocus
-		_M.altTabTable[_M.altTabIndex].client.opacity = opacitySelected
-	end
-end
-
 -- This is called any _M.settings.preview_box_fps milliseconds. In case the list
 -- of clients is changed, we need to redraw the whole preview box. Otherwise, a
 -- simple widget::updated signal is enough
@@ -225,12 +192,8 @@ function _M.cycle(dir)
 
 	_M.altTabTable[_M.altTabIndex].client.minimized = false
 
-	if not _M.settings.preview_box and not _M.settings.client_opacity then
+	if not _M.settings.preview_box then
 		client.focus = _M.altTabTable[_M.altTabIndex].client
-	end
-
-	if _M.settings.client_opacity and _M.preview_wbox.visible then
-		_M.clientOpacity()
 	end
 
 	if _M.settings.cycle_raise_client == true then
@@ -439,8 +402,6 @@ function _M.showPreview()
 
 	_M.preview()
 	_M.preview_wbox.visible = true
-
-	_M.clientOpacity()
 end
 
 function _M.switch(dir, mod_key1, release_key, mod_key2, key_switch)
@@ -482,7 +443,6 @@ function _M.switch(dir, mod_key1, release_key, mod_key2, key_switch)
 
 					if key == "Escape" then
 						for i = 1, #_M.altTabTable do
-							_M.altTabTable[i].client.opacity = _M.altTabTable[i].opacity
 							_M.altTabTable[i].client.minimized = _M.altTabTable[i].minimized
 						end
 					else
@@ -507,7 +467,6 @@ function _M.switch(dir, mod_key1, release_key, mod_key2, key_switch)
 							if i ~= _M.altTabIndex and _M.altTabTable[i].minimized then
 								_M.altTabTable[i].client.minimized = true
 							end
-							_M.altTabTable[i].client.opacity = _M.altTabTable[i].opacity
 						end
 					end
 

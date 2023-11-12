@@ -1,6 +1,10 @@
 awesome-switcher
 ================
 
+## Forked and removed opacity functionality entirely ##
+... because it was interfering with my Picom configuration
+
+
 This plugin integrates the familiar application switcher functionality in the
 [awesome window manager](https://github.com/awesomeWM/awesome).
 
@@ -22,7 +26,7 @@ Clone the repo into your `$XDG_CONFIG_HOME/awesome` directory:
 
 ```Shell
 cd "$XDG_CONFIG_HOME/awesome"
-git clone https://github.com/berlam/awesome-switcher.git awesome-switcher
+git clone https://github.com/intpl/awesome-switcher.git awesome-switcher
 ```
 
 Then add the dependency to your Awesome `rc.lua` config file:
